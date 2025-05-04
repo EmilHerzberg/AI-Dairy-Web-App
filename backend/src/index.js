@@ -5,6 +5,8 @@ const cors       = require('cors');
 const connectDB  = require('./db');
 const authRoutes = require('./routes/auth');
 const authMiddleware       = require('./middleware/auth');
+const audioRoutes = require('./routes/audio');
+
 
 
 const startServer = async () => {
@@ -35,6 +37,8 @@ const startServer = async () => {
       // here req.userId is populated by auth middleware
       res.json({ message: `Hello user ${req.userId}` });
     });
+    //api for the audio route (react mic to whisper transcription)
+    app.use('/api/audio', audioRoutes);
 
     // 6️⃣ Start listening only after everything’s wired
     const PORT = process.env.PORT || 5000;
