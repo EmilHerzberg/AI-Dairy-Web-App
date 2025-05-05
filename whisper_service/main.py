@@ -1,12 +1,19 @@
 # whisper_service/main.py
+import os
 
+# Absoluter Pfad zu den Chocolatey-Shims
+os.environ['FFMPEG_BINARY'] = r'C:\ProgramData\chocolatey\bin\ffmpeg.exe'
+os.environ['FFPROBE_BINARY'] = r'C:\ProgramData\chocolatey\bin\ffprobe.exe'
+
+
+import torchaudio
 from fastapi import FastAPI, Request
 import uvicorn
 import torch
 from transformers import WhisperProcessor, WhisperForConditionalGeneration
-import torchaudio
 from pydub import AudioSegment
 import io
+
 
 app = FastAPI()
 
@@ -17,6 +24,7 @@ model = WhisperForConditionalGeneration.from_pretrained("openai/whisper-base")
 
 @app.post("/transcribe")
 async def transcribe_audio(request: Request):
+
     # 1. Get raw MP3 bytes from the request body
     audio_bytes = await request.body()
     if not audio_bytes:
@@ -46,13 +54,16 @@ async def transcribe_audio(request: Request):
         sampling_rate = 16000
 
     # 5. Transcribe with Whisper
-    input_values = processor(
-        speech_array.squeeze(),
-        return_tensors="pt",
-        sampling_rate=sampling_rate
-    ).input_values
+    speech_np = speech_array.squeeze().numpy()  
 
-    predicted_ids = model.generate(input_values)
+    inputs = processor(
+        speech_np,  # vorsichtshalber .numpy() falls "speech_array" ein Torch-Tensor ist
+        sampling_rate=sampling_rate,
+        return_tensors="pt"
+    )
+    input_features = inputs["input_features"]
+
+    predicted_ids = model.generate(input_features)
     transcription = processor.batch_decode(predicted_ids, skip_special_tokens=True)[0]
 
     return {"transcription": transcription}
