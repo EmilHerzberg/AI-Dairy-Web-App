@@ -15,7 +15,8 @@ backend/.env
 whisper_service/.env
 
 # ── Python / FastAPI
-whisper_service/venv/
+whisper_service/.venv312/
+**/.venv*/
 __pycache__/
 *.py[cod]
 *.pyo
