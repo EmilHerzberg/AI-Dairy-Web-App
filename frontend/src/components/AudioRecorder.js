@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Mp3Recorder from 'mic-recorder-to-mp3';
+import axios from 'axios';
 
 const AudioRecorder = () => {
   const [recorder] = useState(new Mp3Recorder({ bitRate: 128 }));
@@ -29,10 +30,31 @@ const AudioRecorder = () => {
 
   const handleUpload = async () => {
     if (!blobFile) return;
-
-    // We will implement the Axios upload request here soon
-    // after we create the Node.js endpoint.
-  };
+    
+      try {
+        // If using JWT, get the token from your auth context or localStorage
+        const token = localStorage.getItem('token');
+    
+        const formData = new FormData();
+        formData.append('audiofile', blobFile);
+    
+        const response = await axios.post(
+          '/api/audio/upload',
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+    
+        console.log('Transcription:', response.data.transcription);
+        // Maybe store it in some state or show in UI
+      } catch (error) {
+        console.error('Upload failed:', error);
+      }
+    };
 
   return (
     <div className="container">
