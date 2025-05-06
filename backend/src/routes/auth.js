@@ -65,4 +65,13 @@ router.post('/login', async (req, res) => {
   }
 });
 
+router.get('/dev-token', (req, res) => {
+  const token = jwt.sign(
+    { userId: '680fb3a44f46a98f56ee5efe', email: 'dummy@example.com' },
+    process.env.JWT_SECRET,
+    { expiresIn: '1h' }
+  );
+  res.json({ token });
+});
+
 module.exports = router;

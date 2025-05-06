@@ -25,6 +25,8 @@ model = WhisperForConditionalGeneration.from_pretrained("openai/whisper-base")
 @app.post("/transcribe")
 async def transcribe_audio(request: Request):
 
+#region mp3 to wav + Transcription computation
+
     # 1. Get raw MP3 bytes from the request body
     audio_bytes = await request.body()
     if not audio_bytes:
@@ -65,6 +67,8 @@ async def transcribe_audio(request: Request):
 
     predicted_ids = model.generate(input_features)
     transcription = processor.batch_decode(predicted_ids, skip_special_tokens=True)[0]
+
+    #endregion
 
     return {"transcription": transcription}
 
