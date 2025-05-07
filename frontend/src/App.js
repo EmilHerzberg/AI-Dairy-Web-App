@@ -1,22 +1,20 @@
 /* App.js */
-import './App.css';
 import { Routes, Route } from 'react-router-dom';
-import AuthPage from '.pages/AuthPage';
-import AudioRecorder from './components/AudioRecorder';
-import ProtectedRoute from './components/ProtectedRoute';
+import AuthPage from './pages/AuthPage'; 
+import RecorderCalendarPage from './pages/RecorderCalendarPage';
+import ProtectedRoute from './components/ProtectedRoute'; 
 
 function App() {
   return (
     <Routes>
-      {/* The combined auth page is at "/" */}
       <Route path="/" element={<AuthPage />} />
 
-      {/* Protected route for Recorder */}
-      <Route
+      {/* Only logged in users can see Recorder+Calendar */}
+      <Route 
         path="/recorder"
         element={
           <ProtectedRoute>
-            <AudioRecorder />
+            <RecorderCalendarPage />
           </ProtectedRoute>
         }
       />

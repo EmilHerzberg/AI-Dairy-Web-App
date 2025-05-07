@@ -6,7 +6,7 @@ const connectDB  = require('./db');
 const authRoutes = require('./routes/auth');
 const authMiddleware       = require('./middleware/auth');
 const audioRoutes = require('./routes/audio');
-
+const entriesRoute = require('./routes/entries');
 
 
 const startServer = async () => {
@@ -26,13 +26,17 @@ const startServer = async () => {
     // 5️⃣ Mount your auth routes (which use your User model)
     app.use('/auth', authRoutes);
 
-      //example of a protected route using your auth middleware
-    app.get('/api/diary', authMiddleware, (req, res) => {
-      // here req.userId is populated by auth middleware
-      res.json({ message: `Hello user ${req.userId}` });
-    });
+    //   //example of a protected route using your auth middleware
+    // app.get('/api/diary', authMiddleware, (req, res) => {
+    //   // here req.userId is populated by auth middleware
+    //   res.json({ message: `Hello user ${req.userId}` });
+    // });
+
     //api for the audio route (react mic to whisper transcription)
     app.use('/api/audio', audioRoutes);
+
+    //route for reading diary entries for a user
+    app.use('/api/entries', entriesRoute);
 
     // 6️⃣ Start listening only after everything’s wired
     const PORT = process.env.PORT || 5000;

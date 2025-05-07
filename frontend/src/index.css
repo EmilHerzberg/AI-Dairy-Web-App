@@ -11,3 +11,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.has-entries {
+  background-color: #b3ffcc !important; /* soft green highlight */
+  border-radius: 50%;
+}
