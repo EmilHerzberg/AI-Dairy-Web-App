@@ -1,17 +1,25 @@
-import logo from './logo.svg';
+/* App.js */
 import './App.css';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import LoginPage from './pages/LoginPage';
+import { Routes, Route } from 'react-router-dom';
+import AuthPage from '.pages/AuthPage';
 import AudioRecorder from './components/AudioRecorder';
-
-
-
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<LoginPage />} />
-      <Route path="/recorder" element={<AudioRecorder />} />
+      {/* The combined auth page is at "/" */}
+      <Route path="/" element={<AuthPage />} />
+
+      {/* Protected route for Recorder */}
+      <Route
+        path="/recorder"
+        element={
+          <ProtectedRoute>
+            <AudioRecorder />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }

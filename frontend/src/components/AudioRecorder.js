@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import Mp3Recorder from 'mic-recorder-to-mp3';
 import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
 
 const AudioRecorder = () => {
   const [recorder] = useState(new Mp3Recorder({ bitRate: 128 }));
   const [isRecording, setIsRecording] = useState(false);
   const [blobURL, setBlobURL] = useState('');
   const [blobFile, setBlobFile] = useState(null);
-  const [devToken, setDevToken] = useState('');
+  // const [devToken, setDevToken] = useState('');
+  const { user } = useAuth();
 
   const startRecording = async () => {
     try {
@@ -29,24 +31,29 @@ const AudioRecorder = () => {
     }
   };
 
-  /**
-   *  1) Call the dev-token endpoint to get a dummy token.
-   *  2) Store it in localStorage so your handleUpload can read it.
-   */
-  const handleGetDevToken = async () => {
-    try {
-      const res = await axios.get('http://localhost:5000/auth/dev-token');
-      const token = res.data.token;
-      localStorage.setItem('token', token);
-      setDevToken(token);
-      console.log('Dev token retrieved:', token);
-    } catch (error) {
-      console.error('Failed to get dev token:', error);
-    }
-  };
+  // /**
+  //  *  1) Call the dev-token endpoint to get a dummy token.
+  //  *  2) Store it in localStorage so your handleUpload can read it.
+  //  */
+  // const handleGetDevToken = async () => {
+  //   try {
+  //     const res = await axios.get('http://localhost:5000/auth/dev-token');
+  //     const token = res.data.token;
+  //     localStorage.setItem('token', token);
+  //     setDevToken(token);
+  //     console.log('Dev token retrieved:', token);
+  //   } catch (error) {
+  //     console.error('Failed to get dev token:', error);
+  //   }
+  // };
 
   const handleUpload = async () => {
+
     if (!blobFile) return;
+    if (!user || !user.token) {
+      console.warn('No user token found - please login first.');
+      return;
+    }
 
     try {
       // If using JWT, get the token from localStorage
@@ -77,7 +84,7 @@ const AudioRecorder = () => {
     <div className="container">
       <h2>Audio Recorder</h2>
       
-      {/*  Button for dev-token */}
+       {/* Button for dev-token
       <button onClick={handleGetDevToken}>
         Get Dev Token
       </button>
@@ -85,7 +92,7 @@ const AudioRecorder = () => {
         <p style={{ color: 'blue' }}>
           Current devToken: {devToken}
         </p>
-      )}
+      )} */}
 
       <hr />
 
