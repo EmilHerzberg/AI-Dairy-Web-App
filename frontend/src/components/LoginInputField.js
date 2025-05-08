@@ -1,16 +1,16 @@
-/* components/LoginInputField.js */
 import React from 'react';
+
 export default function InputField({ label, type, value, onChange, id }) {
   return (
-    <label className="flex flex-col">
-      <span>{label}</span>
+    <div className="mb-3">
+      <label htmlFor={id} className="form-label">{label}</label>
       <input
         id={id}
         type={type}
         value={value}
         onChange={onChange}
-        className="p-2 border rounded"
+        className="form-control"
       />
-    </label>
+    </div>
   );
 }

@@ -39,14 +39,19 @@ router.post(
       });
       await newEntry.save();
 
-      res.json({
-        message: 'File uploaded and transcribed',
-        transcription,
-      });
+    // 3) Send back success info
+    res.status(200).json({
+      success: true,
+      message: 'File uploaded & transcribed successfully!',
+      entry: newEntry 
+    });
+
     } catch (error) {
       console.error('Upload/Transcription error:', error);
-      res.status(500).json({
-        error: 'Something went wrong while uploading or transcribing',
+      res.status(500).json({ 
+        success: false,
+        message: 'Something went wrong while uploading or transcribing',
+        error: error.message
       });
     }
   }

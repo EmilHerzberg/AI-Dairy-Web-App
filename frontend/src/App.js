@@ -1,4 +1,4 @@
-/* App.js */
+// App.js
 import { Routes, Route } from 'react-router-dom';
 import AuthPage from './pages/AuthPage'; 
 import RecorderCalendarPage from './pages/RecorderCalendarPage';
@@ -9,7 +9,6 @@ function App() {
     <Routes>
       <Route path="/" element={<AuthPage />} />
 
-      {/* Only logged in users can see Recorder+Calendar */}
       <Route 
         path="/recorder"
         element={

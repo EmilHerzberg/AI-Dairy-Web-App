@@ -43,66 +43,84 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6">
-      <h2 className="text-2xl mb-4">
-        {isLoginMode ? 'Login' : 'Register'}
-      </h2>
+    <div className="container">
+      <div className="row d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
+        <div className="col-12 col-sm-8 col-md-6 col-lg-4">
+          <div className="card p-4">
+            <h2 className="mb-4 text-center diary-heading">
+              {isLoginMode ? 'Login' : 'Register'}
+            </h2>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        {/* Email */}
-        <label>
-          Email:
-          <input
-            type="text"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="p-2 border rounded"
-          />
-        </label>
+            <form onSubmit={handleSubmit}>
+              {/* Email */}
+              <div className="mb-3">
+                <label htmlFor="email" className="form-label">Email:</label>
+                <input 
+                  id="email"
+                  type="text"
+                  className="form-control"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
 
-        {/* Conditionally show username if in Register mode */}
-        {!isLoginMode && (
-          <label>
-            Username:
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="p-2 border rounded"
-            />
-          </label>
-        )}
+              {/* Conditionally show username if in Register mode */}
+              {!isLoginMode && (
+                <div className="mb-3">
+                  <label htmlFor="username" className="form-label">Username:</label>
+                  <input 
+                    id="username"
+                    type="text"
+                    className="form-control"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                  />
+                </div>
+              )}
 
-        {/* Password */}
-        <label>
-          Password:
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="p-2 border rounded"
-          />
-        </label>
+              {/* Password */}
+              <div className="mb-3">
+                <label htmlFor="password" className="form-label">Password:</label>
+                <input 
+                  id="password"
+                  type="password"
+                  className="form-control"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
 
-        {/* Error message, if any */}
-        {errorMsg && <p style={{ color: 'red' }}>{errorMsg}</p>}
+              {/* Error message, if any */}
+              {errorMsg && (
+                <div className="alert alert-danger p-2">
+                  {errorMsg}
+                </div>
+              )}
 
-        {/* Submit Button */}
-        <button type="submit" className="p-2 bg-blue-500 text-white rounded">
-          {isLoginMode ? 'Login' : 'Register'}
-        </button>
-      </form>
+              {/* Submit Button */}
+              <button type="submit" className="btn btn-warm w-100 py-2">
+                {isLoginMode ? 'Login' : 'Register'}
+              </button>
+            </form>
 
-      {/* Toggle Link */}
-      <p className="mt-4">
-        {isLoginMode 
-          ? 'No account yet?' 
-          : 'Already have an account?'}
-        {' '}
-        <button onClick={toggleMode} className="text-blue-500 underline">
-          {isLoginMode ? 'Register here' : 'Login here'}
-        </button>
-      </p>
+            {/* Toggle Link */}
+            <p className="mt-3 text-center">
+              {isLoginMode 
+                ? 'No account yet?' 
+                : 'Already have an account?'}{' '}
+              <button 
+                onClick={toggleMode} 
+                className="btn btn-link text-decoration-underline"
+              >
+                {isLoginMode ? 'Register here' : 'Login here'}
+              </button>
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
