@@ -1,4 +1,10 @@
+// backend/src/db.js
 const mongoose = require('mongoose');
+
+/**
+ * ConnectDB uses mongoose to connect to the database
+ * specified by the MONGODB_URI in the .env file.
+ */
 
 const connectDB = async () => {
   try {
@@ -13,5 +19,3 @@ const connectDB = async () => {
 };
 
 module.exports = connectDB;
-
-

@@ -1,18 +1,31 @@
-/* frontend/contexts/AuthContext.js */
+// frontend/contexts/AuthContext.js
+
+/**
+ * Purpose:
+ *  - Holds authentication logic (login, register, logout).
+ *  - Stores the user's token and userId, decoding token if available in localStorage.
+ *  - Provides the user object and auth methods to child components.
+ */
+
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode'; // If you are actually using the 'jwt-decode' library, ensure it's installed.
 
 const AuthContext = createContext();
 
 /**
- * The AuthProvider will store the user object (including userId, token)
- * and provide login/logout/register functions to child components
+ * AuthProvider manages the user object and auth-related functions.
+ * This includes:
+ *  - Setting & retrieving the JWT from localStorage
+ *  - Logging in, registering, and logging out
  */
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
 
-  // On first mount, check localStorage for an existing token
+  /**
+   * On first component mount, check localStorage for a previously stored token.
+   * If found, decode it to retrieve userId; set 'user' state accordingly.
+   */
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -29,7 +42,10 @@ export function AuthProvider({ children }) {
   }, []);
 
   /**
-   * Register flow
+   * Registration flow: 
+   *  1. Send email, password, username to the backend.
+   *  2. Expect a token in response.
+   *  3. Decode it, set user state, store token in localStorage.
    */
   const register = async (email, password, username) => {
     try {
@@ -39,17 +55,13 @@ export function AuthProvider({ children }) {
         username
       });
 
-      // data should contain { token } from your backend
       const decoded = jwtDecode(data.token);
-
-      // Save token and user in state
       setUser({
         userId: decoded.userId,
         token: data.token
       });
-
-      // Also store in localStorage
       localStorage.setItem('token', data.token);
+
       return { success: true };
     } catch (err) {
       console.error('Registration error', err);
@@ -58,7 +70,9 @@ export function AuthProvider({ children }) {
   };
 
   /**
-   * Login flow
+   * Login flow:
+   *  1. Send credentials to the backend.
+   *  2. On success, decode the token, set user state, store token in localStorage.
    */
   const login = async (email, password) => {
     try {
@@ -67,15 +81,11 @@ export function AuthProvider({ children }) {
         password
       });
 
-      // data should contain { token } from your backend
       const decoded = jwtDecode(data.token);
-
-      // Save token and user in state
       setUser({
         userId: decoded.userId,
         token: data.token
       });
-      // Also store in localStorage
       localStorage.setItem('token', data.token);
 
       return { success: true };
@@ -86,13 +96,16 @@ export function AuthProvider({ children }) {
   };
 
   /**
-   * Logout
+   * Logout:
+   *  - Clear user from state
+   *  - Remove token from localStorage
    */
   const logout = () => {
     setUser(null);
     localStorage.removeItem('token');
   };
 
+  // Provide these values to all children within AuthContext
   return (
     <AuthContext.Provider value={{ user, register, login, logout }}>
       {children}
@@ -100,5 +113,7 @@ export function AuthProvider({ children }) {
   );
 }
 
-// Simple hook to use auth
+/**
+ * Convenient custom hook to access AuthContext from any component
+ */
 export const useAuth = () => useContext(AuthContext);

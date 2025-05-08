@@ -1,17 +1,39 @@
+// frontend/pages/RecorderCalendarPage.js
+
+/**
+ * Purpose:
+ *  - Shows an audio recorder component and a calendar.
+ *  - Fetches/saves diary entries, highlights dates with entries, and displays transcripts for the selected day.
+ */
+
 import React, { useState, useEffect } from 'react';
 import AudioRecorder from '../components/AudioRecorder';
 import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css'; // import default styling
+import 'react-calendar/dist/Calendar.css'; 
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 
+/**
+ * RecorderCalendarPage shows:
+ *  1) A calendar that highlights days with diary entries.
+ *  2) An audio recorder component to record and upload audio.
+ *  3) A display of transcripts for the currently selected date.
+ */
 export default function RecorderCalendarPage() {
-  const { user } = useAuth(); // user has { userId, token }
+  // Get the current logged-in user's info (userId, token)
+  const { user } = useAuth();
 
-  const [entries, setEntries] = useState([]);        // All diary entries
+  // Store all entries from the database
+  const [entries, setEntries] = useState([]);
+  // The currently selected date in the calendar
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [dayEntries, setDayEntries] = useState([]);   // Entries for the selected day
+  // The array of entries specific to the selected date
+  const [dayEntries, setDayEntries] = useState([]);
 
+  /**
+   * Fetches all diary entries from the server for the authenticated user.
+   * Attaches the JWT token in the header for authorization.
+   */
   const fetchEntries = async () => {
     if (!user?.token) return [];
     try {
@@ -19,21 +41,25 @@ export default function RecorderCalendarPage() {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setEntries(res.data);
-        // Return them so the caller can do further logic
-        return res.data;
-
+      return res.data;
     } catch (error) {
       console.error('Error fetching entries:', error);
     }
   };
 
-  // 1) Fetch all user entries on mount
+  /**
+   * Runs once on component mount (or when `user` changes).
+   * It retrieves all existing diary entries from the server.
+   */
   useEffect(() => {
     fetchEntries();
   }, [user]);
 
+  /**
+   * Whenever `entries` or `selectedDate` changes,
+   * compute which diary entries belong to the selected day.
+   */
   useEffect(() => {
-    // Re-compute dayEntries every time `entries` or `selectedDate` changes
     const filtered = entries.filter(entry => {
       const entryDate = new Date(entry.date);
       return (
@@ -45,12 +71,18 @@ export default function RecorderCalendarPage() {
     setDayEntries(filtered);
   }, [entries, selectedDate]);
 
+  /**
+   * Callback triggered after a successful file upload in the AudioRecorder component.
+   * Re-fetch the entire list of entries to keep the UI in sync.
+   */
   const handleUploadSuccess = () => {
-  // 1) Re-fetch the entire list
-   fetchEntries(); 
+    fetchEntries();
   };
 
-  // 2) Helper: check if a given date has entries
+  /**
+   * Helper function to check if a given date has any entries.
+   * This is used to determine if we should highlight the calendar date.
+   */
   function hasEntriesOnDay(date) {
     return entries.some((entry) => {
       const entryDate = new Date(entry.date);
@@ -62,26 +94,23 @@ export default function RecorderCalendarPage() {
     });
   }
 
-  // 3) When a day on the calendar is clicked
+  /**
+   * Handler when a calendar day is clicked:
+   * we just set the selectedDate, which triggers the useEffect to filter dayEntries.
+   */
   const onCalendarChange = (date) => {
     setSelectedDate(date);
-    // // Filter the relevant entries for that day
-    // const filtered = entries.filter((entry) => {
-    //   const entryDate = new Date(entry.date);
-    //   return (
-    //     entryDate.getFullYear() === date.getFullYear() &&
-    //     entryDate.getMonth() === date.getMonth() &&
-    //     entryDate.getDate() === date.getDate()
-    //   );
-    // });
-    // setDayEntries(filtered);
   };
 
-  // 4) Style or highlight days on the calendar that have entries
+  /**
+   * Dynamically add a CSS class to calendar days that have entries,
+   * so we can highlight them in the UI.
+   */
   const tileClassName = ({ date, view }) => {
     if (view === 'month') {
       if (hasEntriesOnDay(date)) {
-        return 'has-entries'; // uses the .has-entries style from index.css
+        // 'has-entries' is a custom CSS class in index.css
+        return 'has-entries';
       }
     }
     return null;
@@ -91,15 +120,15 @@ export default function RecorderCalendarPage() {
     <div className="container my-5">
       <h1 className="mb-4 diary-heading">Recorder + Calendar</h1>
       <div className="row g-4">
-        
-        {/* Left Column: Audio Recorder */}
+
+        {/* LEFT COLUMN: The audio recorder card */}
         <div className="col-12 col-md-6">
           <div className="card p-4">
             <AudioRecorder onUploadSuccess={handleUploadSuccess}  />
           </div>
         </div>
         
-        {/* Right Column: Calendar + Day Entries */}
+        {/* RIGHT COLUMN: The calendar and the day's transcripts */}
         <div className="col-12 col-md-6">
           <div className="card p-4">
             <Calendar

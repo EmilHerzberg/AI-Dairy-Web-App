@@ -1,5 +1,12 @@
+// backend/src/models/User.js
 const mongoose = require('mongoose');
 
+/**
+ * User schema:
+ *  - email (unique, lowercase)
+ *  - username (optional field)
+ *  - password (hashed using bcrypt before storing)
+ */
 const UserSchema = new mongoose.Schema({
   email: {
     type: String,
