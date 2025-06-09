@@ -55,8 +55,8 @@ This application allows users to:
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/your-username/your-repo-name.git
-cd your-repo-name
+git clone https://github.com/EmilHerzberg/AI-Dairy-Web-App.git
+cd AI-Dairy-Web-App
 ```
 
 ### 2. Environment Variables
